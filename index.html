@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Ecth-a-Sketch</title>
+  </head>
+  <body>
+    <h1>Ecth-a-Sketch</h1>
+    <button id="prompt-button">Enter new grid dimension</button>
+    <div id="grid-container"></div>
+
+    <script>
+      const promptButton = document.querySelector('#prompt-button');
+      promptButton.addEventListener('click', (e) => {
+        let userPrompt = prompt("Enter a number to generate the square per dimension");
+        let userNumber = parseInt(userPrompt);
+        if (userNumber <= 0) {
+          alert("Number cannot be below 1");
+        } else if (userNumber >= 101) {
+          alert("Number cannot be above 100");
+        } else {
+          let squarePerDimension = Math.floor(userPrompt);
+          generateGrid(squarePerDimension);
+        }
+      });
+
+      const gridContainer = document.querySelector('#grid-container');
+      const gridContainerWidth = 800;
+      const gridContainerHeight = 800;
+      styleGridContainer(gridContainerWidth, gridContainerHeight);
+
+      var squares = [];
+
+      function styleGridContainer(width, height) {
+        gridContainer.style.width = toCssPixel(width);
+        gridContainer.style.height = toCssPixel(height);
+        gridContainer.style.position = "relative";
+        gridContainer.style.backgroundColor = "black";
+      }
+
+      function toCssPixel(x) {
+        return x.toString() + "px";
+      }
+
+      function randomRange(a, b) {
+        if (a > b) {
+          return "ERROR.";
+        }
+        return a + Math.floor(Math.random() * (b - a + 1));
+      }
+
+      function randomCssRgb() {
+        return "rgb(" + randomRange(0, 255) + ", " +
+                        randomRange(0, 255) + ", " + 
+                        randomRange(0, 255) + ")";
+      }
+
+      function makeSquare(width, height) {
+        const square = document.createElement('div');
+        square.style.width = toCssPixel(width);
+        square.style.height = toCssPixel(height);
+        square.style.opacity = 0;
+        square.style.backgroundColor = randomCssRgb();
+        square.addEventListener('mouseover', (e) => {
+          square.style.opacity = 1;
+        });
+
+        return square;
+      }
+
+      function clearGrid() {
+        for(let i = 0; i < squares.length; ++i) {
+          gridContainer.removeChild(squares[i]);
+        }
+
+        squares = [];
+      }
+
+      function insertSquare(square) {
+        squares.push(square);
+        gridContainer.append(square);
+      }
+
+      function generateGrid(squarePerDimension) {
+        clearGrid();
+
+        let squareWidth = Math.floor(gridContainerWidth / squarePerDimension);
+        let squareHeight = Math.floor(gridContainerHeight / squarePerDimension);
+        for(let row = 0; row < squarePerDimension; ++row) {
+          for(let col = 0; col < squarePerDimension; ++col) {
+            let newSquare = makeSquare(squareWidth, squareHeight);
+            newSquare.style.position = "absolute";
+            newSquare.style.top = toCssPixel(squareHeight * row);
+            newSquare.style.left = toCssPixel(squareWidth * col);
+
+            insertSquare(newSquare);
+          }
+        }
+      }
+      
+      generateGrid(20);
+
+    </script>
+  </body>
+</html>
